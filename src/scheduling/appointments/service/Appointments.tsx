@@ -1,12 +1,13 @@
 import axios from 'axios'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const endpoint = 'https://xchange-blitz.xcaliberapis.com/api/v1'
+const endpoint = `${process.env.REACT_APP_ENDPOINT}`
 
 const config = {
   headers: {
-    Authorization:
-      'Bearer U2FsdGVkX19caQ9ns7zpCc63TYcjet5+EwgvjJdFhoamk4ySvXGPdtFeEkmagYxF6V7M48JruyIoOKjRCQW86DYvsmkGugdlHEiaxV91ImmzDbkv0bfJ1haN9leQkbQecf0LpRSKzhBBRGefuihTM1CLaqJzjhvTCOQwHMVXiZpEToQSxp/EzRSnFYg80uLaqw465Pgl53yCTe4CyvES4Lrb6zGVd9nAyNDIutijH015OaYNIrlQJRJujlZl6qk6qzV3gEwcJPvfndw0/XdtsCwG/+AGVsqdI4DxifDUGDnIdsqnxTc0MrH8EUOlYT/BWZAVuZdVfqK4qsW+pPnLdCP4N3AqaIG8UKGM8yRlKsKAxTxUPbOSvHlJnyfCOazPOzyICqPuIpkUSh64enj8qw==',
-    'x-source-id': '24f8d20c-fd00-4068-9f47-90887a1666ce',
+    Authorization: `${process.env.REACT_APP_AUTHORIZATION}`,
+    'x-source-id': `${process.env.REACT_APP_XSOURCEID}`,
   },
 }
 
