@@ -1,5 +1,6 @@
 import { Label, DateTimePicker } from '@hospitalrun/components'
 import React from 'react'
+import moment from 'moment'
 
 interface Props {
   name: string
@@ -36,6 +37,8 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         timeFormat="h:mm aa"
         timeIntervals={15}
         withPortal={false}
+        minDate={moment().toDate()}
+        maxDate={moment().add(3, 'months').toDate()}
       />
     </div>
   )
