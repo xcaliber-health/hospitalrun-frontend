@@ -8,3 +8,5 @@ export default interface Appointment extends AbstractDBModel {
   reason: string
   type: string
 }
+
+

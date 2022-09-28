@@ -10,3 +10,8 @@ export const appointmentTypes: SelectOption[] = [
   { label: 'Physical Exam', value: 'Physical Exam' },
   { label: 'Office Flu Only', value: 'Office Flu Only' },
 ]
+
+export const appointmentStatus: SelectOption[] = [
+  { label: 'Scheduled', value: 'Scheduled' },
+  { label: 'Confirmed', value: 'Confirmed' },
+]

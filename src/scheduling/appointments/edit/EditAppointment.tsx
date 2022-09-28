@@ -1,5 +1,6 @@
-import { Spinner, Button, Toast } from '@hospitalrun/components'
-import isEmpty from 'lodash/isEmpty'
+// import { Spinner, Button, Toast } from '@hospitalrun/components'
+import { Spinner, Button } from '@hospitalrun/components'
+// import isEmpty from 'lodash/isEmpty'
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -7,11 +8,12 @@ import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumb
 import { useUpdateTitle } from '../../../page-header/title/TitleContext'
 import usePatient from '../../../patients/hooks/usePatient'
 import useTranslator from '../../../shared/hooks/useTranslator'
-import Appointment from '../../../shared/model/Appointment'
+// import Appointment from '../../../shared/model/Appointment'
 import useAppointment from '../../hooks/useAppointment'
-import useUpdateAppointment from '../../hooks/useUpdateAppointment'
+// import useUpdateAppointment from '../../hooks/useUpdateAppointment'
 import AppointmentDetailForm from '../AppointmentDetailForm'
 import { getAppointmentLabel } from '../util/scheduling-appointment.util'
+// import { Appointment } from '../ViewAppointments'
 
 const EditAppointment = () => {
   const { t } = useTranslator()
@@ -23,15 +25,15 @@ const EditAppointment = () => {
   }, [updateTitle, t])
   const history = useHistory()
 
-  const [newAppointment, setAppointment] = useState({} as Appointment)
+  const [newAppointment, setAppointment] = useState<any>()
   const { data: currentAppointment, isLoading: isLoadingAppointment } = useAppointment(id)
 
-  const {
-    mutate: updateMutate,
-    isLoading: isLoadingUpdate,
-    isError: isErrorUpdate,
-    error: updateMutateError,
-  } = useUpdateAppointment(newAppointment)
+  // const {
+  //   mutate: updateMutate,
+  //   isLoading: isLoadingUpdate,
+  //   isError: isErrorUpdate,
+  //   error: updateMutateError,
+  // } = useUpdateAppointment(newAppointment)
   const { data: patient } = usePatient(currentAppointment ? currentAppointment.patient : id)
 
   const breadcrumbs = [
@@ -57,14 +59,14 @@ const EditAppointment = () => {
     history.push(`/appointments/${newAppointment.id}`)
   }
 
-  const onSave = () => {
-    if (isEmpty(updateMutateError) && !isErrorUpdate) {
-      updateMutate(newAppointment).then(() => {
-        Toast('success', t('states.success'), t('scheduling.appointment.successfullyUpdated'))
-        history.push(`/appointments/${newAppointment.id}`)
-      })
-    }
-  }
+  // const onSave = () => {
+  //   if (isEmpty(updateMutateError) && !isErrorUpdate) {
+  //     updateMutate(newAppointment).then(() => {
+  //       Toast('success', t('states.success'), t('scheduling.appointment.successfullyUpdated'))
+  //       history.push(`/appointments/${newAppointment.id}`)
+  //     })
+  //   }
+  // }
 
   const onFieldChange = (key: string, value: string | boolean) => {
     setAppointment({
@@ -73,22 +75,45 @@ const EditAppointment = () => {
     })
   }
 
-  if (isLoadingAppointment || isLoadingUpdate) {
+  // if (isLoadingAppointment || isLoadingUpdate) {
+  //   return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
+  // }
+
+  if (isLoadingAppointment) {
     return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
   }
 
   return (
+    // <div>
+    //   <AppointmentDetailForm
+    //     isEditable
+    //     appointment={newAppointment}
+    //     patient={patient}
+    //     onFieldChange={onFieldChange}
+    //     error={updateMutateError}
+    //   />
+    //   <div className="row float-right">
+    //     <div className="btn-group btn-group-lg mr-3">
+    //       <Button className="mr-2" color="success" onClick={onSave}>
+    //         {t('scheduling.appointments.updateAppointment')}
+    //       </Button>
+    //       <Button color="danger" onClick={onCancel}>
+    //         {t('actions.cancel')}
+    //       </Button>
+    //     </div>
+    //   </div>
+    // </div>
+
     <div>
       <AppointmentDetailForm
         isEditable
         appointment={newAppointment}
         patient={patient}
         onFieldChange={onFieldChange}
-        error={updateMutateError}
       />
       <div className="row float-right">
         <div className="btn-group btn-group-lg mr-3">
-          <Button className="mr-2" color="success" onClick={onSave}>
+          <Button className="mr-2" color="success">
             {t('scheduling.appointments.updateAppointment')}
           </Button>
           <Button color="danger" onClick={onCancel}>

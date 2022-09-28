@@ -3,17 +3,21 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 
-import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumbs'
+// import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../../../page-header/button-toolbar/ButtonBarProvider'
 import { useUpdateTitle } from '../../../page-header/title/TitleContext'
-import usePatient from '../../../patients/hooks/usePatient'
+// import usePatient from '../../../patients/hooks/usePatient'
 import useTranslator from '../../../shared/hooks/useTranslator'
+import Patient from '../../../shared/model/Patient'
 import Permissions from '../../../shared/model/Permissions'
 import { RootState } from '../../../shared/store'
-import useAppointment from '../../hooks/useAppointment'
+// import useAppointment from '../../hooks/useAppointment'
 import useDeleteAppointment from '../../hooks/useDeleteAppointment'
-import AppointmentDetailForm from '../AppointmentDetailForm'
-import { getAppointmentLabel } from '../util/scheduling-appointment.util'
+import AppointmentDetailForm, { Appointment } from '../AppointmentDetailForm'
+import { getAppointmentId } from '../service/Appointments'
+import { getPatientNameById } from '../service/Patients'
+// import { getAppointmentLabel } from '../util/scheduling-appointment.util'
+// import { Appointment } from '../ViewAppointments'
 
 const ViewAppointment = () => {
   const { t } = useTranslator()
@@ -32,13 +36,41 @@ const ViewAppointment = () => {
   const setButtonToolBar = useButtonToolbarSetter()
   const { permissions } = useSelector((state: RootState) => state.user)
 
-  const { data: appointment } = useAppointment(id)
-  const { data: patient } = usePatient(appointment ? appointment.patient : id)
-  const breadcrumbs = [
-    { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
-    { text: appointment ? getAppointmentLabel(appointment) : '', location: `/patients/${id}` },
-  ]
-  useAddBreadcrumbs(breadcrumbs, true)
+  // const { data: appointment } = useAppointment(id)
+
+  const [appointment, setAppointment] = useState<Appointment>()
+  const [patientName, setPatientName] = useState<Patient>()
+
+  const appointmentFunc = async () => {
+    setAppointment(await getAppointmentId(id))
+  }
+
+  const patientFunc = async () => {
+    setPatientName(
+      await getPatientNameById(
+        parseInt(String(appointment?.participant[0].actor.reference.substr(8))),
+      ),
+    )
+  }
+
+  useEffect(() => {
+    console.log(id)
+    appointmentFunc()
+  }, [])
+
+  useEffect(() => {
+    if (appointment) {
+      console.log('view appointment', appointment)
+      patientFunc()
+    }
+  }, [appointment])
+
+  // const { data: patient } = usePatient(appointment ? appointment.patient : id)
+  // const breadcrumbs = [
+  //   { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
+  //   { text: appointment ? getAppointmentLabel(appointment) : '', location: `/patients/${id}` },
+  // ]
+  // useAddBreadcrumbs(breadcrumbs, true)
 
   const onAppointmentDeleteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -101,9 +133,13 @@ const ViewAppointment = () => {
 
   return (
     <>
-      {patient && appointment ? (
+      {patientName && appointment ? (
         <div>
-          <AppointmentDetailForm appointment={appointment} isEditable={false} patient={patient} />
+          <AppointmentDetailForm
+            appointment={appointment}
+            isEditable={false}
+            patient={patientName}
+          />
           <Modal
             body={t('scheduling.appointment.deleteConfirmationMessage')}
             buttonsAlignment="right"

@@ -11,30 +11,30 @@ const config = {
   },
 }
 
-export const getAppointment = () => {
+export const getAllPatients = () => {
   return axios
-    .get(`${endpoint}/Appointment?practitioner=140857915539458`, config)
+    .get(`${endpoint}/Patient`, config)
     .then(async (response) => {
       console.log(response)
       const data = await response.data
       console.log(data)
-      console.log(data.data.entry)
-      return data.data.entry
+      return data
     })
     .catch((error) => {
       console.log(error)
     })
 }
 
-export const getAppointmentId = (id: number) => {
+export const getPatientNameById = (id: number) => {
   return axios
-    .get(`${endpoint}/Appointment/${id}`, config)
+    .get(`${endpoint}/Patient/${id}`, config)
     .then(async (response) => {
       console.log(response)
       const data = await response.data
       console.log(data)
-      console.log(data.data)
-      return data.data
+      console.log(data.data.name[0].given.join(' '))
+      const name = data.data.name[0].given.join(' ')
+      return name
     })
     .catch((error) => {
       console.log(error)
