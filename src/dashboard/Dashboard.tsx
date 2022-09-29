@@ -15,11 +15,11 @@ const Dashboard: React.FC = () => {
       <img
         src="banner.svg"
         style={{
-          objectFit: 'cover',
-          // height: '70vh',
+          objectFit: 'fill',
+          height: '79vh',
           width: '100%',
         }}
-        alt=""
+        alt="under construction banner"
       />
     </>
   )
