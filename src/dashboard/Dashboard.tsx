@@ -13,11 +13,11 @@ const Dashboard: React.FC = () => {
     <>
       <h3>Practice Summary</h3>
       <img
-        src="banner.svg"
+        src="banner.jpg"
         style={{
-          objectFit: 'fill',
-          height: '79vh',
-          width: '100%',
+          height: '78vh',
+          width: '50vw',
+          marginLeft: '13vw',
         }}
         alt="under construction banner"
       />
