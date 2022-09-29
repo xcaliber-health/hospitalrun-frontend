@@ -18,7 +18,7 @@ export const getAllPatients = () => {
       console.log(response)
       const data = await response.data
       console.log(data)
-      return data
+      return data.data.entry
     })
     .catch((error) => {
       console.log(error)

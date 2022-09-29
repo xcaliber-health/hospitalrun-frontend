@@ -1,63 +1,46 @@
-// import { Select, Typeahead, Label, Alert } from '@hospitalrun/components'
 import { Select, Label, Alert } from '@hospitalrun/components'
-import React from 'react'
-
+import React, { useEffect, useState } from 'react'
+import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DateTimePickerWithLabelFormGroup from '../../shared/components/input/DateTimePickerWithLabelFormGroup'
-// import { SelectOption } from '../../shared/components/input/SelectOption'
-import TextInputWithLabelFormGroup from '../../shared/components/input/TextInputWithLabelFormGroup'
-// import TextFieldWithLabelFormGroup from '../../shared/components/input/TextFieldWithLabelFormGroup'
-// import TextInputWithLabelFormGroup from '../../shared/components/input/TextInputWithLabelFormGroup'
-// import PatientRepository from '../../shared/db/PatientRepository'
 import useTranslator from '../../shared/hooks/useTranslator'
+import Appointment from '../../shared/model/Appointment'
 import Patient from '../../shared/model/Patient'
-// import { Appointment } from './ViewAppointments'
 import { appointmentTypes, appointmentStatus } from '../appointments/constants/Appointment'
-
-export interface Appointment {
-  appointmentType: {
-    text: string
-  }
-  participant: {
-    actor: {
-      reference: string
-    }
-  }[]
-  id: string
-  start: Date
-  minutesDuration: number
-  status: string
-}
+import { getAllPatients } from './service/Patients'
 
 interface Props {
   appointment: Appointment
   patient?: Patient
   isEditable: boolean
   error?: any
-  onFieldChange?: (key: string, value: string | boolean) => void
+  onFieldChange?: (key: string, value: string | boolean | Date | number) => void
+  setAppointment?: (appointment: Appointment) => void
 }
 
 const AppointmentDetailForm = (props: Props) => {
-  const { onFieldChange, appointment, patient, isEditable, error } = props
+  const { appointment, patient, isEditable, error, setAppointment } = props
   const { t } = useTranslator()
+  const [patientDetails, setPatientDetails] = useState<any>()
+  const [options, setOptions] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const patientName: string = String(patient)
+  // const selectedValues: any[] = []
 
-  const onDateChange = (date: Date, fieldName: string) =>
-    onFieldChange && onFieldChange(fieldName, date.toISOString())
+  // const patientName: string = String(patient)
+  // console.log(patientName)
+  // if (patientName) {
+  //   selectedValues.push(patientName)
+  //   console.log('selected values', selectedValues)
+  // }
 
-  // const onInputElementChange = (event: React.ChangeEvent<HTMLInputElement>, fieldName: string) =>
-  //   onFieldChange && onFieldChange(fieldName, event.target.value)
-
-  // const typeOptions: SelectOption[] = [
-  //   { label: t('scheduling.appointment.types.checkup'), value: 'checkup' },
-  //   { label: t('scheduling.appointment.types.emergency'), value: 'emergency' },
-  //   { label: t('scheduling.appointment.types.followUp'), value: 'follow up' },
-  //   { label: t('scheduling.appointment.types.routine'), value: 'routine' },
-  //   { label: t('scheduling.appointment.types.walkIn'), value: 'walk in' },
-  // ]
-
-  var end = new Date(appointment.start)
-  end.setMinutes(end.getMinutes() + appointment.minutesDuration)
+  useEffect(() => {
+    console.log('appointment details', appointment)
+    if (!patientDetails) {
+      ;(async () => {
+        setPatientDetails(await getAllPatients())
+      })()
+    }
+  }, [])
 
   return (
     <>
@@ -70,24 +53,32 @@ const AppointmentDetailForm = (props: Props) => {
               isRequired
               text={t('scheduling.appointment.patient')}
             />
-            {/* <Typeahead
+            <AsyncTypeahead
               id="patientTypeahead"
               disabled={!isEditable || patient !== undefined}
-              value={patient}
+              defaultInputValue={String(patient)}
               placeholder={t('scheduling.appointment.patient')}
-              onChange={(p: Patient[]) =>
-                onFieldChange && p[0] && onFieldChange('patient', p[0].id)
-              }
-              onSearch={async (query: string) => PatientRepository.search(query)}
-              searchAccessor="fullName"
-              renderMenuItemChildren={(p: Patient) => <div>{`${p.fullName} (${p.code})`}</div>}
+              onChange={(p: any) => {
+                appointment.patientId = p[0] && p[0].resource.id
+              }}
+              onSearch={async (query: string) => {
+                setIsLoading(true)
+                setOptions(
+                  patientDetails?.filter((detail: any) =>
+                    String(detail.resource.name[0].text)
+                      .toLowerCase()
+                      .includes(query.toLowerCase()),
+                  ),
+                )
+                setIsLoading(false)
+              }}
+              options={options}
+              labelKey={(option) => `${option.resource?.name[0].text} `}
+              renderMenuItemChildren={(p: any) => {
+                return <div>{`${p.resource.name[0].text} ${p.resource.id}`}</div>
+              }}
               isInvalid={!!error?.patient}
-              feedback={t(error?.patient)}
-            /> */}
-            <TextInputWithLabelFormGroup
-              name="patientName"
-              value={patientName}
-              isEditable={isEditable}
+              isLoading={isLoading}
             />
           </div>
         </div>
@@ -97,40 +88,36 @@ const AppointmentDetailForm = (props: Props) => {
           <DateTimePickerWithLabelFormGroup
             name="startDate"
             label={t('scheduling.appointment.startDate')}
-            value={appointment.start ? new Date(appointment.start) : undefined}
+            value={appointment.start ? new Date(appointment.start) : new Date(Date.now())}
             isEditable={isEditable}
             isInvalid={error?.startDateTime}
             feedback={t(error?.startDateTime)}
             onChange={(date: Date) => {
-              onDateChange(date, 'startDateTime')
+              appointment.start = String(date)
+              if (setAppointment) setAppointment(appointment)
             }}
+            isRequired
           />
         </div>
         <div className="col">
           <DateTimePickerWithLabelFormGroup
             name="endDate"
             label={t('scheduling.appointment.endDate')}
-            value={appointment.start ? end : undefined}
+            value={appointment.end ? new Date(appointment.end) : new Date(Date.now())}
             isEditable={isEditable}
             onChange={(date: Date) => {
-              onDateChange(date, 'endDateTime')
+              appointment.end = String(date)
+              if (new Date(appointment.end) < new Date(appointment.start)) {
+                appointment.end = JSON.stringify(new Date(appointment.start))
+              }
+              appointment.minutesDuration =
+                new Date(appointment.end).getMinutes() - new Date(appointment.start).getMinutes()
+              if (setAppointment) setAppointment(appointment)
             }}
+            isRequired
           />
         </div>
       </div>
-      {/* <div className="row">
-        <div className="col">
-          <TextInputWithLabelFormGroup
-            name="location"
-            label={t('scheduling.appointment.location')}
-            value={appointment.location}
-            isEditable={isEditable}
-            onChange={(event) => {
-              onInputElementChange(event, 'location')
-            }}
-          />
-        </div>
-      </div> */}
       <div className="row">
         <div className="col">
           <div className="form-group" data-testid="typeSelect">
@@ -139,9 +126,12 @@ const AppointmentDetailForm = (props: Props) => {
               id="type"
               options={appointmentTypes}
               defaultSelected={appointmentTypes.filter(
-                ({ value }) => value === appointment.appointmentType.text,
+                ({ value }) => value === appointment?.appointmentType?.text,
               )}
-              // onChange={(values) => onFieldChange && onFieldChange('type', values[0])}
+              onChange={(values) => {
+                appointment.appointmentType = { text: values[0] }
+                if (setAppointment) setAppointment(appointment)
+              }}
               disabled={!isEditable}
             />
           </div>
@@ -155,29 +145,17 @@ const AppointmentDetailForm = (props: Props) => {
               id="status"
               options={appointmentStatus}
               defaultSelected={appointmentStatus.filter(
-                ({ value }) => value === appointment.status,
+                ({ value }) => value == appointment?.status,
               )}
-              // onChange={(values) => onFieldChange && onFieldChange('type', values[0])}
+              onChange={(values) => {
+                appointment.status = values[0]
+                if (setAppointment) setAppointment(appointment)
+              }}
               disabled={!isEditable}
             />
           </div>
         </div>
       </div>
-      {/* <div className="row">
-        <div className="col">
-          <div className="form-group">
-            <TextFieldWithLabelFormGroup
-              name="reason"
-              label={t('scheduling.appointment.reason')}
-              value={appointment.reason}
-              isEditable={isEditable}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                onFieldChange && onFieldChange('reason', event.currentTarget.value)
-              }
-            />
-          </div>
-        </div>
-      </div> */}
     </>
   )
 }

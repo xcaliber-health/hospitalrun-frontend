@@ -1,13 +1,13 @@
 import { Calendar, Button } from '@hospitalrun/components'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-
 import useAddBreadcrumbs from '../../page-header/breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../../page-header/button-toolbar/ButtonBarProvider'
 import { useUpdateTitle } from '../../page-header/title/TitleContext'
 import FilterPatientModal from '../../patients/visits/FilterPatientModal'
 import Loading from '../../shared/components/Loading'
 import useTranslator from '../../shared/hooks/useTranslator'
+import Appointment from '../../shared/model/Appointment'
 import { getAppointment } from './service/Appointments'
 import { getPatientNameById } from './service/Patients'
 
@@ -22,22 +22,22 @@ interface Event {
   status: string
 }
 
-export interface Appointment {
-  resource: {
-    appointmentType: {
-      text: string
-    }
-    participant: {
-      actor: {
-        reference: string
-      }
-    }[]
-    id: string
-    start: Date
-    minutesDuration: number
-    status: string
-  }
-}
+// export interface Appointment {
+//   resource: {
+//     appointmentType: {
+//       text: string
+//     }
+//     participant: {
+//       actor: {
+//         reference: string
+//       }
+//     }[]
+//     id: string
+//     start: Date
+//     minutesDuration: number
+//     status: string
+//   }
+// }
 
 const breadcrumbs = [{ i18nKey: 'scheduling.appointments.label', location: '/appointments' }]
 
@@ -48,14 +48,12 @@ const ViewAppointments = () => {
   useEffect(() => {
     updateTitle(t('scheduling.appointments.label'))
   })
-  // const { data: appointments, isLoading } = useAppointments()
   const [appointments, setAppointment] = useState<any[]>()
   const [isLoading, setIsLoading] = useState(true)
   const [events, setEvents] = useState<Event[]>([])
   const setButtonToolBar = useButtonToolbarSetter()
   useAddBreadcrumbs(breadcrumbs, true)
   const [showFilter, setshowFilter] = useState(false)
-
   const [patientStatus, setpatientStatus] = useState('')
   const [appointmentType, setappointmentType] = useState('')
 
@@ -108,7 +106,7 @@ const ViewAppointments = () => {
 
   useEffect(() => {
     if (appointments) {
-      appointments.map(async (appointment: Appointment) => {
+      appointments.map(async (appointment: { resource: Appointment }) => {
         const patientName = await getPatientNameById(
           parseInt(String(appointment.resource.participant[0].actor.reference.substr(8))),
         )

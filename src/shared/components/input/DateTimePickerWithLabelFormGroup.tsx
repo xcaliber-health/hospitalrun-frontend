@@ -5,7 +5,7 @@ import moment from 'moment'
 interface Props {
   name: string
   label: string
-  value: Date | undefined
+  value: Date
   isEditable?: boolean
   isRequired?: boolean
   onChange?: (date: Date) => void
@@ -28,8 +28,9 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         isInvalid={isInvalid}
         feedback={feedback}
         onChange={(inputDate) => {
+          console.log('date time picker', inputDate)
           if (onChange) {
-            onChange(inputDate)
+            onChange(new Date(inputDate))
           }
         }}
         showTimeSelect

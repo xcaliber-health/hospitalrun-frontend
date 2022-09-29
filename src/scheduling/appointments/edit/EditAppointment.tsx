@@ -34,7 +34,9 @@ const EditAppointment = () => {
   //   isError: isErrorUpdate,
   //   error: updateMutateError,
   // } = useUpdateAppointment(newAppointment)
-  const { data: patient } = usePatient(currentAppointment ? currentAppointment.patient : id)
+  const { data: patient } = usePatient(
+    currentAppointment ? currentAppointment.participant[0].actor : id,
+  )
 
   const breadcrumbs = [
     { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
@@ -68,7 +70,7 @@ const EditAppointment = () => {
   //   }
   // }
 
-  const onFieldChange = (key: string, value: string | boolean) => {
+  const onFieldChange = (key: string, value: string | boolean | Date | number) => {
     setAppointment({
       ...newAppointment,
       [key]: value,

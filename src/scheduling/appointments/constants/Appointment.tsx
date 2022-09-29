@@ -14,4 +14,5 @@ export const appointmentTypes: SelectOption[] = [
 export const appointmentStatus: SelectOption[] = [
   { label: 'Scheduled', value: 'Scheduled' },
   { label: 'Confirmed', value: 'Confirmed' },
+  { label: 'Checked In', value: 'Checked In' },
 ]

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import dotenv from 'dotenv'
+import Appointment from '../../../shared/model/Appointment'
 dotenv.config()
 
 const endpoint = `${process.env.REACT_APP_ENDPOINT}`
@@ -35,6 +36,94 @@ export const getAppointmentId = (id: number) => {
       console.log(data)
       console.log(data.data)
       return data.data
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+
+export const createAppointment = (appointment: Appointment) => {
+  console.log(appointment)
+
+  const data = {
+    data: {
+      resourceType: 'Appointment',
+      start: new Date(appointment.start),
+      minutesDuration: appointment.minutesDuration,
+      description: '',
+      meta: {},
+      created: new Date(Date.now()),
+      status: appointment.status,
+      participant: [
+        {
+          actor: {
+            reference: `Patient/140919926030337`,
+          },
+        },
+        {
+          actor: {
+            reference: 'Practitioner/140857915539458',
+          },
+        },
+        {
+          actor: {
+            reference: 'HealthcareService/140857911017476',
+          },
+        },
+      ],
+      extension: [
+        {
+          url: 'http://xcaliber-fhir/structureDefinition/slot-type',
+          valueString: 'appointment',
+        },
+        {
+          url: 'http://xcaliber-fhir/structureDefinition/appointment-mode',
+          valueString: 'IN_PERSON',
+        },
+        {
+          url: 'http://xcaliber-fhir/structureDefinition/status',
+          extension: [
+            {
+              url: 'http://xcaliber-fhir/structureDefinition/status',
+              valueString: `${appointment.status ? appointment.status : 'Scheduled'}`,
+            },
+            {
+              url: 'http://xcaliber-fhir/structureDefinition/room',
+              valueString: null,
+            },
+          ],
+        },
+      ],
+      appointmentType: {
+        coding: [
+          {
+            system: 'https://hl7.org/fhir/v2/ValueSet/appointment-type',
+            code: `${
+              appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
+            }`,
+            display: `${
+              appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
+            }`,
+          },
+        ],
+        text: `${
+          appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
+        }`,
+      },
+      patientInstruction: null,
+      contained: [],
+    },
+  }
+
+  console.log(data)
+
+  return axios
+    .post(`${endpoint}/Appointment`, data, config)
+    .then(async (response) => {
+      console.log(response)
+      const data = response.data
+      console.log(data.data.id)
+      return data.data.id
     })
     .catch((error) => {
       console.log(error)
