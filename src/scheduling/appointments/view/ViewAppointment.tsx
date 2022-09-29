@@ -13,9 +13,9 @@ import Patient from '../../../shared/model/Patient'
 import Permissions from '../../../shared/model/Permissions'
 import { RootState } from '../../../shared/store'
 // import useAppointment from '../../hooks/useAppointment'
-import useDeleteAppointment from '../../hooks/useDeleteAppointment'
+// import useDeleteAppointment from '../../hooks/useDeleteAppointment'
 import AppointmentDetailForm from '../AppointmentDetailForm'
-import { getAppointmentId } from '../service/Appointments'
+import { deleteAppointment, getAppointmentId } from '../service/Appointments'
 import { getPatientNameById } from '../service/Patients'
 // import { getAppointmentLabel } from '../util/scheduling-appointment.util'
 // import { Appointment } from '../ViewAppointments'
@@ -32,7 +32,7 @@ const ViewAppointment = () => {
 
   const { id } = useParams<any>()
   const history = useHistory()
-  const [deleteMutate] = useDeleteAppointment()
+  // const [deleteMutate] = useDeleteAppointment()
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false)
   const setButtonToolBar = useButtonToolbarSetter()
   const { permissions } = useSelector((state: RootState) => state.user)
@@ -78,15 +78,25 @@ const ViewAppointment = () => {
     setShowDeleteConfirmation(true)
   }
 
-  const onDeleteConfirmationButtonClick = () => {
+  const onDeleteConfirmationButtonClick = async () => {
     if (!appointment) {
       return
     }
 
-    deleteMutate({ appointmentId: appointment.id }).then(() => {
+    console.log(appointment)
+
+    // deleteMutate({ appointmentId: appointment.id }).then(() => {
+    //   history.push('/appointments')
+    //   Toast('success', t('states.success'), t('scheduling.appointment.successfullyDeleted'))
+    // })
+
+    let status = await deleteAppointment(parseInt(appointment.id))
+
+    if (status === 'success') {
       history.push('/appointments')
       Toast('success', t('states.success'), t('scheduling.appointment.successfullyDeleted'))
-    })
+    }
+
     setShowDeleteConfirmation(false)
   }
 

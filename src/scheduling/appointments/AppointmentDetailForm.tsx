@@ -1,4 +1,5 @@
 import { Select, Label, Alert } from '@hospitalrun/components'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
 import DateTimePickerWithLabelFormGroup from '../../shared/components/input/DateTimePickerWithLabelFormGroup'
@@ -55,7 +56,7 @@ const AppointmentDetailForm = (props: Props) => {
             />
             <AsyncTypeahead
               id="patientTypeahead"
-              disabled={!isEditable || patient !== undefined}
+              disabled={!isEditable}
               defaultInputValue={String(patient)}
               placeholder={t('scheduling.appointment.patient')}
               onChange={(p: any) => {
@@ -88,7 +89,7 @@ const AppointmentDetailForm = (props: Props) => {
           <DateTimePickerWithLabelFormGroup
             name="startDate"
             label={t('scheduling.appointment.startDate')}
-            value={appointment.start ? new Date(appointment.start) : new Date(Date.now())}
+            value={appointment?.start ? new Date(appointment.start) : new Date(Date.now())}
             isEditable={isEditable}
             isInvalid={error?.startDateTime}
             feedback={t(error?.startDateTime)}
@@ -103,15 +104,17 @@ const AppointmentDetailForm = (props: Props) => {
           <DateTimePickerWithLabelFormGroup
             name="endDate"
             label={t('scheduling.appointment.endDate')}
-            value={appointment.end ? new Date(appointment.end) : new Date(Date.now())}
+            value={
+              appointment?.start && appointment.minutesDuration
+                ? moment(appointment.start).add(appointment.minutesDuration, 'minute').toDate()
+                : new Date(Date.now())
+            }
             isEditable={isEditable}
             onChange={(date: Date) => {
               appointment.end = String(date)
-              if (new Date(appointment.end) < new Date(appointment.start)) {
-                appointment.end = JSON.stringify(new Date(appointment.start))
-              }
-              appointment.minutesDuration =
-                new Date(appointment.end).getMinutes() - new Date(appointment.start).getMinutes()
+              var difference =
+                new Date(appointment.end).getTime() - new Date(appointment.start).getTime()
+              appointment.minutesDuration = Math.round(difference / 60000)
               if (setAppointment) setAppointment(appointment)
             }}
             isRequired

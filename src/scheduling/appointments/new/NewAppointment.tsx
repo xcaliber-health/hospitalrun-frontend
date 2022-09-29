@@ -71,12 +71,6 @@ const NewAppointment = () => {
     let data = await createAppointment(newAppointment)
     console.log('data', await data)
     setAptId(await data)
-    // console.log('@@@@@', await data)
-    // setAptId(await data)
-    // console.log('%%%%', aptId)
-    // newAppointment.id = String(aptId)
-    // setAppointment({ ...newAppointment })
-    // console.log(newAppointment)
     setSaved(true)
     setError(validateNewAppointment(newAppointment))
   }
