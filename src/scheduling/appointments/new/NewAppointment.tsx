@@ -1,6 +1,6 @@
 // import { Button, Spinner, Toast } from '@hospitalrun/components'
 import { Button, Spinner, Toast } from '@hospitalrun/components'
-import isEmpty from 'lodash/isEmpty'
+// import isEmpty from 'lodash/isEmpty'
 // import addMinutes from 'date-fns/addMinutes'
 // import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
 // import isEmpty from 'lodash/isEmpty'
@@ -71,7 +71,9 @@ const NewAppointment = () => {
     let { id, status } = await createAppointment(newAppointment)
     console.log('id: ' + id + ' ' + 'status: ' + status)
     setAptId(id)
-    if (status === 'success') setSaved(true)
+    status === 'success'
+      ? setSaved(true)
+      : Toast('error', t('states.error'), t('scheduling.appointment.errors.createAppointmentError'))
     setError(validateNewAppointment(newAppointment))
   }
 
@@ -82,16 +84,16 @@ const NewAppointment = () => {
   useEffect(() => {
     // if save click and no error proceed, else give error message.
     if (saved) {
-      if (isEmpty(newAppointmentMutateError) && !isErrorNewAppointment) {
-        newAppointmentMutate(newAppointment).then((_result) => {
-          Toast('success', t('states.success'), t('scheduling.appointment.successfullyCreated'))
-          console.log(aptId)
-          history.push(`/appointments/${aptId}`)
-        })
-      } else if (!isEmpty(newAppointmentMutateError)) {
-        newAppointmentMutateError.message = 'scheduling.appointment.errors.createAppointmentError'
-      }
+      newAppointmentMutate(newAppointment).then((_result) => {
+        Toast('success', t('states.success'), t('scheduling.appointment.successfullyCreated'))
+        console.log(aptId)
+        history.push(`/appointments/${aptId}`)
+      })
     }
+    // else {
+    //   Toast('error', t('states.error'), t('scheduling.appointment.errors.createAppointmentError'))
+    //   // newAppointmentMutateError.message = 'scheduling.appointment.errors.createAppointmentError'
+    // }
     setSaved(false)
   }, [
     saved,

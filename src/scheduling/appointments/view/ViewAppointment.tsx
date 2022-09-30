@@ -98,6 +98,8 @@ const ViewAppointment = () => {
     if (status === 'success') {
       history.push('/appointments')
       Toast('success', t('states.success'), t('scheduling.appointment.successfullyDeleted'))
+    } else {
+      Toast('error', t('states.error'), 'Could not delete appointment')
     }
 
     setShowDeleteConfirmation(false)

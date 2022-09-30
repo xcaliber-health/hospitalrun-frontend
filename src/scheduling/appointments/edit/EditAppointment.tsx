@@ -82,6 +82,8 @@ const EditAppointment = () => {
       console.log('updated the values successfully')
       Toast('success', t('states.success'), t('scheduling.appointment.successfullyUpdated'))
       history.push(`/appointments/${id}`)
+    } else {
+      Toast('error', t('states.error'), 'Could not edit appointment')
     }
   }
 

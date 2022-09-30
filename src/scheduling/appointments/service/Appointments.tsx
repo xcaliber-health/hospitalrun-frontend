@@ -57,7 +57,7 @@ export const createAppointment = (appointment: Appointment) => {
       participant: [
         {
           actor: {
-            reference: `Patient/140919926030337`,
+            reference: `Patient/${appointment.patientId}`,
           },
         },
         {
@@ -125,6 +125,7 @@ export const createAppointment = (appointment: Appointment) => {
     })
     .catch((error) => {
       console.log(error)
+      return { id: 404, status: 'error' }
     })
 }
 
@@ -142,7 +143,11 @@ export const updateAppointment = (appointment: Appointment) => {
       participant: [
         {
           actor: {
-            reference: `Patient/${appointment?.participant[0].actor.reference.substring(8)}`,
+            reference: `Patient/${
+              appointment.patientId
+                ? appointment.patientId
+                : appointment?.participant[0].actor.reference.substring(8)
+            }`,
           },
         },
         {
@@ -211,6 +216,7 @@ export const updateAppointment = (appointment: Appointment) => {
     })
     .catch((error) => {
       console.log(error)
+      return { id: 404, status: 'error' }
     })
 }
 
@@ -223,5 +229,6 @@ export const deleteAppointment = (id: number) => {
     })
     .catch((error) => {
       console.log(error)
+      return 'error'
     })
 }

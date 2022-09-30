@@ -76,7 +76,7 @@ const AppointmentDetailForm = (props: Props) => {
             />
             <AsyncTypeahead
               id="patientTypeahead"
-              disabled={!isEditable}
+              disabled={!isEditable || patient !== undefined}
               defaultInputValue={patient ? String(patient) : ''}
               placeholder={t('scheduling.appointment.patient')}
               onChange={(p: any) => {

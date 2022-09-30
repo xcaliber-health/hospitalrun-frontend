@@ -40,6 +40,7 @@ const FilterPatientModal = ({ show, onCloseButtonClick, onFieldChange }: Props) 
           <Label text={t('scheduling.appointment.type')} title="type" />
           <Select
             id="type"
+            defaultSelected={appointmentTypes.filter(({ value }) => value === appointmentType)}
             options={appointmentTypes}
             onChange={(values) => setappointmentType(values[0])}
           />
@@ -47,6 +48,7 @@ const FilterPatientModal = ({ show, onCloseButtonClick, onFieldChange }: Props) 
         <div className="form-group">
           <Label text="Status" title="Status" />
           <Select
+            defaultSelected={appointmentStatus.filter(({ value }) => value == patientStatus)}
             id="status"
             options={appointmentStatus}
             onChange={(values) => setPatientStatus(values[0])}
