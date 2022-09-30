@@ -1,4 +1,5 @@
 import { Select, Label, Alert } from '@hospitalrun/components'
+import { addMinutes, roundToNearestMinutes } from 'date-fns'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead'
@@ -24,6 +25,25 @@ const AppointmentDetailForm = (props: Props) => {
   const [patientDetails, setPatientDetails] = useState<any>()
   const [options, setOptions] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const startDateTime = roundToNearestMinutes(new Date(), { nearestTo: 15 })
+  const endDateTime = addMinutes(startDateTime, 60)
+
+  if (!appointment.start) {
+    appointment.start = String(new Date(Date.now()))
+  }
+
+  if (!appointment.end) {
+    appointment.end = String(endDateTime)
+  }
+
+  if (!appointment.minutesDuration) {
+    appointment.minutesDuration = Math.round(
+      Math.floor(
+        (new Date(appointment.end).getTime() - new Date(appointment.start).getTime()) / 60000 / 5,
+      ) * 5,
+    )
+  }
 
   // const selectedValues: any[] = []
 
@@ -57,7 +77,7 @@ const AppointmentDetailForm = (props: Props) => {
             <AsyncTypeahead
               id="patientTypeahead"
               disabled={!isEditable}
-              defaultInputValue={String(patient)}
+              defaultInputValue={patient ? String(patient) : ''}
               placeholder={t('scheduling.appointment.patient')}
               onChange={(p: any) => {
                 appointment.patientId = p[0] && p[0].resource.id
@@ -107,7 +127,7 @@ const AppointmentDetailForm = (props: Props) => {
             value={
               appointment?.start && appointment.minutesDuration
                 ? moment(appointment.start).add(appointment.minutesDuration, 'minute').toDate()
-                : new Date(Date.now())
+                : endDateTime
             }
             isEditable={isEditable}
             onChange={(date: Date) => {

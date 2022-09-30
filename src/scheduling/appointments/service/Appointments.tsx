@@ -53,7 +53,7 @@ export const createAppointment = (appointment: Appointment) => {
       description: '',
       meta: {},
       created: new Date(Date.now()),
-      status: appointment.status,
+      status: appointment.status ? appointment.status : 'Scheduled',
       participant: [
         {
           actor: {
@@ -99,16 +99,14 @@ export const createAppointment = (appointment: Appointment) => {
           {
             system: 'https://hl7.org/fhir/v2/ValueSet/appointment-type',
             code: `${
-              appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
+              appointment.appointmentType ? appointment.appointmentType.text : 'Routine Visit'
             }`,
             display: `${
-              appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
+              appointment.appointmentType ? appointment.appointmentType.text : 'Routine Visit'
             }`,
           },
         ],
-        text: `${
-          appointment.appointmentType.text ? appointment.appointmentType.text : 'Routine visit'
-        }`,
+        text: `${appointment.appointmentType ? appointment.appointmentType.text : 'Routine Visit'}`,
       },
       patientInstruction: null,
       contained: [],
@@ -122,8 +120,8 @@ export const createAppointment = (appointment: Appointment) => {
     .then(async (response) => {
       console.log(response)
       const data = response.data
-      console.log(data.data.id)
-      return data.data.id
+      console.log(data.data)
+      return data.data
     })
     .catch((error) => {
       console.log(error)

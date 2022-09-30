@@ -2,10 +2,10 @@ import { Spinner, Button, Modal, Toast } from '@hospitalrun/components'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-
-// import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumbs'
+import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumbs'
 import { useButtonToolbarSetter } from '../../../page-header/button-toolbar/ButtonBarProvider'
 import { useUpdateTitle } from '../../../page-header/title/TitleContext'
+import Loading from '../../../shared/components/Loading'
 // import usePatient from '../../../patients/hooks/usePatient'
 import useTranslator from '../../../shared/hooks/useTranslator'
 import Appointment from '../../../shared/model/Appointment'
@@ -17,6 +17,7 @@ import { RootState } from '../../../shared/store'
 import AppointmentDetailForm from '../AppointmentDetailForm'
 import { deleteAppointment, getAppointmentId } from '../service/Appointments'
 import { getPatientNameById } from '../service/Patients'
+import { getAppointmentLabel } from '../util/scheduling-appointment.util'
 // import { getAppointmentLabel } from '../util/scheduling-appointment.util'
 // import { Appointment } from '../ViewAppointments'
 
@@ -41,9 +42,11 @@ const ViewAppointment = () => {
 
   const [appointment, setAppointment] = useState<Appointment>()
   const [patientName, setPatientName] = useState<Patient>()
+  const [isLoading, setIsLoading] = useState(true)
 
   const appointmentFunc = async () => {
     setAppointment(await getAppointmentId(id))
+    setIsLoading(false)
   }
 
   const patientFunc = async () => {
@@ -67,11 +70,11 @@ const ViewAppointment = () => {
   }, [appointment])
 
   // const { data: patient } = usePatient(appointment ? appointment.patient : id)
-  // const breadcrumbs = [
-  //   { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
-  //   { text: appointment ? getAppointmentLabel(appointment) : '', location: `/patients/${id}` },
-  // ]
-  // useAddBreadcrumbs(breadcrumbs, true)
+  const breadcrumbs = [
+    { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
+    { text: appointment ? getAppointmentLabel(appointment) : '', location: `/patients/${id}` },
+  ]
+  useAddBreadcrumbs(breadcrumbs, true)
 
   const onAppointmentDeleteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -141,6 +144,10 @@ const ViewAppointment = () => {
       setButtonToolBar([])
     }
   }, [getButtons, setButtonToolBar])
+
+  if (isLoading || appointment === undefined) {
+    return <Loading />
+  }
 
   return (
     <>

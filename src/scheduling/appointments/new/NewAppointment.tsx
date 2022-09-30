@@ -68,10 +68,10 @@ const NewAppointment = () => {
 
   const onSave = async () => {
     console.log(newAppointment)
-    let data = await createAppointment(newAppointment)
-    console.log('data', await data)
-    setAptId(await data)
-    setSaved(true)
+    let { id, status } = await createAppointment(newAppointment)
+    console.log('id: ' + id + ' ' + 'status: ' + status)
+    setAptId(id)
+    if (status === 'success') setSaved(true)
     setError(validateNewAppointment(newAppointment))
   }
 

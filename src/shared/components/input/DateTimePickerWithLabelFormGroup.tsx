@@ -40,6 +40,8 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         withPortal={false}
         minDate={moment().toDate()}
         maxDate={moment().add(3, 'months').toDate()}
+        minTime={moment().toDate()}
+        maxTime={new Date(new Date().setHours(19, 0, 0, 0))}
       />
     </div>
   )

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumbs'
 import { useUpdateTitle } from '../../../page-header/title/TitleContext'
+import Loading from '../../../shared/components/Loading'
 import useTranslator from '../../../shared/hooks/useTranslator'
 import Appointment from '../../../shared/model/Appointment'
 import Patient from '../../../shared/model/Patient'
@@ -23,9 +24,11 @@ const EditAppointment = () => {
 
   const [appointment, setAppointment] = useState({} as Appointment)
   const [patientName, setPatientName] = useState<Patient>()
+  const [isLoading, setIsLoading] = useState(true)
 
   const appointmentFunc = async () => {
     setAppointment(await getAppointmentId(id))
+    setIsLoading(false)
   }
 
   const patientFunc = async () => {
@@ -89,6 +92,10 @@ const EditAppointment = () => {
   // if (isLoadingAppointment) {
   //   return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
   // }
+
+  if (isLoading || appointment === undefined) {
+    return <Loading />
+  }
 
   return (
     <>
