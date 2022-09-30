@@ -1,10 +1,10 @@
 import escapeStringRegexp from 'escape-string-regexp'
 
 import { relationalDb } from '../config/pouchdb'
-import Appointment from '../model/Appointment'
+import AppointmentDB from '../model/Appointment'
 import Repository from './Repository'
 
-class AppointmentRepository extends Repository<Appointment> {
+class AppointmentRepository extends Repository<AppointmentDB> {
   constructor() {
     super('appointment', relationalDb)
     this.db.createIndex({
@@ -15,7 +15,7 @@ class AppointmentRepository extends Repository<Appointment> {
   }
 
   // Fuzzy search for patient appointments. Used for patient appointment search bar
-  async searchPatientAppointments(patientId: string, text: string): Promise<Appointment[]> {
+  async searchPatientAppointments(patientId: string, text: string): Promise<AppointmentDB[]> {
     const escapedString = escapeStringRegexp(text)
     return super.search({
       selector: {

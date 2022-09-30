@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 import { Label, Modal, Select } from '@hospitalrun/components'
 import useTranslator from '../../shared/hooks/useTranslator'
 import { Button } from 'react-bootstrap'
-import { appointmentTypes } from '../../scheduling/appointments/constants/Appointment'
+import {
+  appointmentStatus,
+  appointmentTypes,
+} from '../../scheduling/appointments/constants/Appointment'
+// import { getAllPatients } from '../../scheduling/appointments/service/Patients'
 
 interface Props {
   show: boolean
@@ -11,13 +15,21 @@ interface Props {
 }
 
 const FilterPatientModal = ({ show, onCloseButtonClick, onFieldChange }: Props) => {
+  // const func = () => {
+  //   console.log('ALL PATIENTS DATA', getAllPatients())
+  // }
+
+  // useEffect(() => {
+  //   func()
+  // }, [])
+
   const { t } = useTranslator()
 
-  const [patientId, setpatientId] = useState('')
+  const [patientStatus, setPatientStatus] = useState('')
   const [appointmentType, setappointmentType] = useState('')
 
   const clearValues = () => {
-    setpatientId('')
+    setPatientStatus('')
     setappointmentType('')
   }
 
@@ -28,13 +40,23 @@ const FilterPatientModal = ({ show, onCloseButtonClick, onFieldChange }: Props) 
           <Label text={t('scheduling.appointment.type')} title="type" />
           <Select
             id="type"
+            defaultSelected={appointmentTypes.filter(({ value }) => value === appointmentType)}
             options={appointmentTypes}
             onChange={(values) => setappointmentType(values[0])}
           />
         </div>
+        <div className="form-group">
+          <Label text="Status" title="Status" />
+          <Select
+            defaultSelected={appointmentStatus.filter(({ value }) => value == patientStatus)}
+            id="status"
+            options={appointmentStatus}
+            onChange={(values) => setPatientStatus(values[0])}
+          />
+        </div>
         <Button
           onClick={() => {
-            onFieldChange && onFieldChange(patientId, appointmentType)
+            onFieldChange && onFieldChange(patientStatus, appointmentType)
             clearValues()
             onCloseButtonClick()
           }}
