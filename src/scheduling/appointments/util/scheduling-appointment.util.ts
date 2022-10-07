@@ -17,11 +17,9 @@ export function getAppointmentLabel(appointment: Appointment | undefined) {
     return ''
   }
 
-  const { id, start,minutesDuration} = appointment
+  const { id, startDateTime, endDateTime } = appointment
 
-  return start
-    ? `${toLocaleString(new Date(start))} - ${toLocaleString(new Date(
-      new Date(start).setMinutes(new Date(start).getMinutes() + minutesDuration),
-    ))}`
+  return startDateTime && endDateTime
+    ? `${toLocaleString(new Date(startDateTime))} - ${toLocaleString(new Date(endDateTime))}`
     : id
 }

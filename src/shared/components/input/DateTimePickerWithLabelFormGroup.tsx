@@ -1,11 +1,10 @@
 import { Label, DateTimePicker } from '@hospitalrun/components'
 import React from 'react'
-import moment from 'moment'
 
 interface Props {
   name: string
   label: string
-  value: Date
+  value: Date | undefined
   isEditable?: boolean
   isRequired?: boolean
   onChange?: (date: Date) => void
@@ -28,9 +27,8 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         isInvalid={isInvalid}
         feedback={feedback}
         onChange={(inputDate) => {
-          console.log('date time picker', inputDate)
           if (onChange) {
-            onChange(new Date(inputDate))
+            onChange(inputDate)
           }
         }}
         showTimeSelect
@@ -38,10 +36,6 @@ const DateTimePickerWithLabelFormGroup = (props: Props) => {
         timeFormat="h:mm aa"
         timeIntervals={15}
         withPortal={false}
-        minDate={moment().toDate()}
-        maxDate={moment().add(3, 'months').toDate()}
-        minTime={moment().toDate()}
-        maxTime={new Date(new Date().setHours(19, 0, 0, 0))}
       />
     </div>
   )

@@ -18,12 +18,10 @@ export class AppointmentError extends Error {
 export default function validateAppointment(appointment: Appointment): AppointmentError {
   const newError: any = {}
 
-  if (!appointment.patientId) {
+  if (!appointment.patient) {
     newError.patient = 'scheduling.appointment.errors.patientRequired'
   }
-  if (isBefore(new Date(
-    new Date(appointment.start).setMinutes(new Date(appointment.start).getMinutes() + appointment.minutesDuration),
-  ), new Date(appointment.start))) {
+  if (isBefore(new Date(appointment.endDateTime), new Date(appointment.startDateTime))) {
     newError.startDateTime = 'scheduling.appointment.errors.startDateMustBeBeforeEndDate'
   }
 

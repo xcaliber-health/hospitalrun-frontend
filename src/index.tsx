@@ -8,6 +8,7 @@ import * as serviceWorker from './serviceWorker'
 import './shared/config/i18n'
 import store from './shared/store'
 
+
 ReactDOM.render(
   <Provider store={store}>
     <App />
