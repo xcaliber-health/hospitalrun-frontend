@@ -1,5 +1,5 @@
 
- import { Checkbox, FormControlLabel, styled, ThemeProvider } from '@mui/material';
+import { Checkbox, FormControlLabel, styled, ThemeProvider } from '@mui/material';
 import React from 'react';
 import theme from './theme';
 
@@ -41,6 +41,7 @@ import theme from './theme';
           color='primary'        
            onChange={onLabelChange}
            value={label}
+           
            name={name}
            checked={labelChecked}
            disabled={disabled}
