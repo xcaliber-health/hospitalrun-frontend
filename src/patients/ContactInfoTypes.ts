@@ -2,8 +2,11 @@ enum ContactInfoTypes {
   home = 'home',
   mobile = 'mobile',
   work = 'work',
-  temporary = 'temporary',
-  old = 'old',
+  // main = 'main', 
+  // night ='night',
+  // fax = 'fax', 
+  // other = 'other'
+
 }
 
 export default ContactInfoTypes

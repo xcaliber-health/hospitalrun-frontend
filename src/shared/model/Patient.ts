@@ -26,6 +26,4 @@ export default interface Patient extends AbstractDBModel, Name, ContactInformati
   careGoals: CareGoal[]
   bloodType: string
   visits: Visit[]
-  emergencyContactName:string
-  emergencyContactNumber:string
 }

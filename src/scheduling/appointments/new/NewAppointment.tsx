@@ -1,9 +1,7 @@
-// import { Button, Spinner, Toast } from '@hospitalrun/components'
 import { Button, Spinner, Toast } from '@hospitalrun/components'
-// import isEmpty from 'lodash/isEmpty'
-// import addMinutes from 'date-fns/addMinutes'
-// import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
-// import isEmpty from 'lodash/isEmpty'
+import addMinutes from 'date-fns/addMinutes'
+import roundToNearestMinutes from 'date-fns/roundToNearestMinutes'
+import isEmpty from 'lodash/isEmpty'
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -11,13 +9,10 @@ import useAddBreadcrumbs from '../../../page-header/breadcrumbs/useAddBreadcrumb
 import { useUpdateTitle } from '../../../page-header/title/TitleContext'
 import useTranslator from '../../../shared/hooks/useTranslator'
 import Appointment from '../../../shared/model/Appointment'
-// import Appointment from '../../../shared/model/Appointment'
 import Patient from '../../../shared/model/Patient'
 import useScheduleAppointment from '../../hooks/useScheduleAppointment'
 import AppointmentDetailForm from '../AppointmentDetailForm'
-import { createAppointment } from '../service/Appointments'
 import { AppointmentError } from '../util/validate-appointment'
-// import { Appointment } from '../ViewAppointments'
 
 const breadcrumbs = [
   { i18nKey: 'scheduling.appointments.label', location: '/appointments' },
@@ -42,14 +37,18 @@ const NewAppointment = () => {
   })
   useAddBreadcrumbs(breadcrumbs, true)
 
-  // const startDateTime = roundToNearestMinutes(new Date(), { nearestTo: 15 })
-  // const endDateTime = addMinutes(startDateTime, 60)
+  const startDateTime = roundToNearestMinutes(new Date(), { nearestTo: 15 })
+  const endDateTime = addMinutes(startDateTime, 60)
   const [saved, setSaved] = useState(false)
   const [newAppointmentMutateError, setError] = useState<AppointmentError>({} as AppointmentError)
-
-  const [newAppointment, setAppointment] = useState({} as Appointment)
-
-  const [aptId, setAptId] = useState()
+  const [newAppointment, setAppointment] = useState({
+    patient: patient || '',
+    startDateTime: startDateTime.toISOString(),
+    endDateTime: endDateTime.toISOString(),
+    location: '',
+    reason: '',
+    type: '',
+  } as Appointment)
 
   const {
     mutate: newAppointmentMutate,
@@ -62,38 +61,23 @@ const NewAppointment = () => {
     history.push('/appointments')
   }
 
-  // const func = async () => {
-  //   return await createAppointment(newAppointment)
-  // }
-
-  const onSave = async () => {
-    console.log(newAppointment)
-    let { id, status } = await createAppointment(newAppointment)
-    console.log('id: ' + id + ' ' + 'status: ' + status)
-    setAptId(id)
-    status === 'success'
-      ? setSaved(true)
-      : Toast('error', t('states.error'), t('scheduling.appointment.errors.createAppointmentError'))
+  const onSave = () => {
+    setSaved(true)
     setError(validateNewAppointment(newAppointment))
   }
 
   useEffect(() => {
-    console.log(newAppointment)
-  }, [newAppointment])
-
-  useEffect(() => {
     // if save click and no error proceed, else give error message.
     if (saved) {
-      newAppointmentMutate(newAppointment).then((_result) => {
-        Toast('success', t('states.success'), t('scheduling.appointment.successfullyCreated'))
-        console.log(aptId)
-        history.push(`/appointments/${aptId}`)
-      })
+      if (isEmpty(newAppointmentMutateError) && !isErrorNewAppointment) {
+        newAppointmentMutate(newAppointment).then((result) => {
+          Toast('success', t('states.success'), t('scheduling.appointment.successfullyCreated'))
+          history.push(`/appointments/${result?.id}`)
+        })
+      } else if (!isEmpty(newAppointmentMutateError)) {
+        newAppointmentMutateError.message = 'scheduling.appointment.errors.createAppointmentError'
+      }
     }
-    // else {
-    //   Toast('error', t('states.error'), t('scheduling.appointment.errors.createAppointmentError'))
-    //   // newAppointmentMutateError.message = 'scheduling.appointment.errors.createAppointmentError'
-    // }
     setSaved(false)
   }, [
     saved,
@@ -109,6 +93,13 @@ const NewAppointment = () => {
     return <Spinner color="blue" loading size={[10, 25]} type="ScaleLoader" />
   }
 
+  const onFieldChange = (key: string, value: string | boolean) => {
+    setAppointment({
+      ...newAppointment,
+      [key]: value,
+    })
+  }
+
   return (
     <div>
       <form aria-label="new appointment form">
@@ -116,9 +107,7 @@ const NewAppointment = () => {
           appointment={newAppointment as Appointment}
           patient={patient as Patient}
           error={newAppointmentMutateError}
-          setAppointment={async (appointmentDetail) => {
-            setAppointment({ ...appointmentDetail })
-          }}
+          onFieldChange={onFieldChange}
         />
         <div className="row float-right">
           <div className="btn-group btn-group-lg mr-3">
