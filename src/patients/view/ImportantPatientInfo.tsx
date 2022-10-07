@@ -39,6 +39,8 @@ const ImportantPatientInfo = (props: Props) => {
   const [showAddVisitModal, setShowAddVisitModal] = useState(false)
   const { data, status } = usePatientAllergies(patient.id)
 
+ 
+
   const headerRowStyle: CSSProperties = {
     minHeight: '3rem',
     marginBottom: '1rem',

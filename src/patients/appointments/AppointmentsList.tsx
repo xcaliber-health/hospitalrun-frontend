@@ -61,22 +61,15 @@ const AppointmentsList = ({ patient }: Props) => {
                   label: t('scheduling.appointment.startDate'),
                   key: 'startDateTime',
                   formatter: (row) =>
-                    row.start ? format(new Date(row.start), 'yyyy-MM-dd, hh:mm a') : '',
+                    row.startDateTime
+                      ? format(new Date(row.startDateTime), 'yyyy-MM-dd, hh:mm a')
+                      : '',
                 },
                 {
                   label: t('scheduling.appointment.endDate'),
                   key: 'endDateTime',
                   formatter: (row) =>
-                    row.start
-                      ? format(
-                          new Date(
-                            new Date(row.start).setMinutes(
-                              new Date(row.start).getMinutes() + row.minutesDuration,
-                            ),
-                          ),
-                          'yyyy-MM-dd, hh:mm a',
-                        )
-                      : '',
+                    row.endDateTime ? format(new Date(row.endDateTime), 'yyyy-MM-dd, hh:mm a') : '',
                 },
                 { label: t('scheduling.appointment.location'), key: 'location' },
                 { label: t('scheduling.appointment.type'), key: 'type' },

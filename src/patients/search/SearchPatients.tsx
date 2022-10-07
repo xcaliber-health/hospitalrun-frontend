@@ -6,8 +6,10 @@ import PatientSearchInput from './PatientSearchInput'
 import ViewPatientsTable from './ViewPatientsTable'
 import FilterMenu from './filter/PatientFilter'
 import { data } from './../util/constants'
-import PatientRepository from '../../shared/db/PatientRepository'
+// import PatientRepository from '../../shared/db/PatientRepository'
 import Patient from '../../shared/model/Patient'
+import { getAllPatients } from '../../service/service'
+
 
 export interface ILabelsContext {
   filterLabels: string[]
@@ -56,7 +58,6 @@ const changeTrigger = (param:boolean) =>{
  
   let allFilterData: any = []
   useEffect(() => {
-   
   }, [allFilterData]);
 
   function getAge(dateString:string) {   
@@ -66,13 +67,17 @@ const changeTrigger = (param:boolean) =>{
     return age;
 }
 
-  const filterAllPatientData1 = async (param:any) => {
+  const filterAllPatientData = async (param:any) => {
     console.log('paramValues: ',param,param.length)
     if (param?.length > 0) {
      
-      let tempData = await PatientRepository.findAll()
+      // let tempData = await PatientRepository.findAll()
+      let tempData = await getAllPatients()
       param.map((data:String)=>{
-        tempData.map((data2)=>{
+        tempData?.map((data2:any)=>{
+          if (data === 'other'){
+            data= "nonbinary"
+          }
           if(data === data2.sex){
             allFilterData.push(data2)
             console.log('newdata: ', allFilterData)
@@ -113,7 +118,7 @@ const changeTrigger = (param:boolean) =>{
               console.log('param: ', param)
               setFilterValues(param)
               console.log('insidefilterValues: ', filterValues)
-              filterAllPatientData1(param)
+              filterAllPatientData(param)
               setClearFilterS(true)
             }}
             handleApply={() => {}}
