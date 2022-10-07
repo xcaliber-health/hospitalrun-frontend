@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom'
 
 import useAddBreadcrumbs from '../../page-header/breadcrumbs/useAddBreadcrumbs'
 import { useUpdateTitle } from '../../page-header/title/TitleContext'
-import { addPatient } from '../../service/service'
 import useTranslator from '../../shared/hooks/useTranslator'
 import Patient from '../../shared/model/Patient'
 import { RootState } from '../../shared/store'
@@ -25,7 +24,6 @@ const NewPatient = () => {
   const dispatch = useDispatch()
   const { createError } = useSelector((state: RootState) => state.patient)
   const { patients } = Object(useSelector((state: RootState) => state.patients))
-  const[newId, setNewId]=useState("")
 
   const [patient, setPatient] = useState({} as Patient)
   const [duplicatePatient, setDuplicatePatient] = useState<Patient | undefined>(undefined)
@@ -48,18 +46,16 @@ const NewPatient = () => {
     history.push('/patients')
   }
 
-  let vId =0
+  const onSuccessfulSave = (newPatient: Patient) => {
+    history.push(`/patients/${newPatient.id}`)
+    Toast(
+      'success',
+      t('states.success'),
+      `${t('patients.successfullyCreated')} ${newPatient.fullName}`,
+    )
+  }
 
-  const onSave = async() => {
-    console.log("%%%%%%",patient)
-   
-        let dd: any = await addPatient(patient);
-        console.log("id>>:",dd)
-        vId=dd.id
-        setNewId(dd.id)
-        console.log("id:",newId)
-    
-
+  const onSave = () => {
     let duplicatePatients = []
     if (patients !== undefined) {
       duplicatePatients = patients.filter((existingPatient: any) =>
@@ -80,16 +76,6 @@ const NewPatient = () => {
     }
     return false
   }
-  
-  const onSuccessfulSave = (newPatient: Patient) => {
-    console.log("vid: ",vId)
-    history.push(`/patients/${vId}`)
-    Toast(
-      'success',
-      t('states.success'),
-      `${t('patients.successfullyCreated')} ${newPatient.fullName}`,
-    )
-  }
 
   const onPatientChange = (newPatient: Partial<Patient>) => {
     setPatient(newPatient as Patient)
@@ -102,8 +88,6 @@ const NewPatient = () => {
   const closeDuplicateNewPatientModal = () => {
     setShowDuplicateNewPatientModal(false)
   }
-
- 
 
   return (
     <div>

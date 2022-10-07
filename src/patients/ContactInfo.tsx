@@ -1,5 +1,6 @@
 import { Select, Label, Spinner, Row, Column, Icon } from '@hospitalrun/components'
 import React, { useEffect, ReactElement } from 'react'
+
 import { SelectOption } from '../shared/components/input/SelectOption'
 import TextFieldWithLabelFormGroup from '../shared/components/input/TextFieldWithLabelFormGroup'
 import TextInputWithLabelFormGroup from '../shared/components/input/TextInputWithLabelFormGroup'
@@ -35,23 +36,16 @@ const ContactInfo = (props: Props): ReactElement => {
   }))
 
   const header = (
-      name !== "email" && name !== "address"? 
-      <Row className="header mb-2">
+    <Row className="header mb-2">
       <Column xs={12} sm={4}>
         {/* <span className="">{t('patient.contactInfoType.label')}</span>
         <span className="d-sm-none"> &amp; {t(label)}</span> */}
-        <Label text={`${name} Type`} />
+        <Label text={`${name}Type`} />
       </Column>
       <Column className="d-none d-sm-block" sm={8}>
         {t(label)}
       </Column>
     </Row>
-    :
-    <Row className="header mb-2">
-    <Column className="d-none d-sm-block" sm={8}>
-      {t(label)}
-    </Column>
-  </Row>
   )
 
   const componentList = {
@@ -86,22 +80,18 @@ const ContactInfo = (props: Props): ReactElement => {
     const error = errors ? errors[i] : undefined
     return (
       <Row key={entry.id}>
-        { name !== "email" && name !== "address"?
-          <Column sm={4}>
-            <div className="form-group" data-testid={`${name}Type${i}Select`}>
-              {/* <Label text={`${name}Type${i}`} /> */}
-              <Select
-                id={`${name}Type${i}Select`}
-                options={typeOptions}
-                defaultSelected={typeOptions.filter(({ value }) => value === entry.type)}
-                onChange={(values) => onTypeChange(values[0], i)}
-                disabled={!isEditable}
-              />
-            </div>
-          </Column>
-          :
-          ""
-        }
+        <Column sm={4}>
+          <div className="form-group" data-testid={`${name}Type${i}Select`}>
+            {/* <Label text={`${name}Type${i}`} /> */}
+            <Select
+              id={`${name}Type${i}Select`}
+              options={typeOptions}
+              defaultSelected={typeOptions.filter(({ value }) => value === entry.type)}
+              onChange={(values) => onTypeChange(values[0], i)}
+              disabled={!isEditable}
+            />
+          </div>
+        </Column>
         <Column sm={8}>
           <Component
             name={`${name}${i}`}
@@ -156,7 +146,7 @@ const ContactInfo = (props: Props): ReactElement => {
     <div>
       {data.length > 0 ? header : null}
       {entries}
-      {isEditable && name !== "email" ? addButton : null}
+      {isEditable ? addButton : null}
     </div>
   )
 }

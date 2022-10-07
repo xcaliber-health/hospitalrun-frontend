@@ -35,20 +35,22 @@ export const convertLab = (lab: Lab): PatientHistoryRecord[] => {
 
 export const convertAppointment = (appt: Appointment): PatientHistoryRecord[] => {
   const apptEvents = []
-  if (appt.startDateTime) {
+  if (appt.start) {
     apptEvents.push({
-      date: new Date(appt.startDateTime),
+      date: new Date(appt.start),
       type: HistoryRecordType.APPOINTMENT,
-      info: `Started - ${appt.type}`,
+      info: `Started - ${appt.appointmentType.text}`,
       recordId: appt.id,
       id: `startedAppt${appt.id}`,
     })
   }
-  if (appt.endDateTime) {
+  if (new Date(appt.start).setMinutes(new Date(appt.start).getMinutes() + appt.minutesDuration)) {
     apptEvents.push({
-      date: new Date(appt.endDateTime),
+      date: new Date(
+        new Date(appt.start).setMinutes(new Date(appt.start).getMinutes() + appt.minutesDuration),
+      ),
       type: HistoryRecordType.APPOINTMENT,
-      info: `Ended - ${appt.type}`,
+      info: `Ended - ${appt.appointmentType.text}`,
       recordId: appt.id,
       id: `endedAppt${appt.id}`,
     })
