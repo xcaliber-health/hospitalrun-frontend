@@ -275,6 +275,31 @@ const GeneralInformation = (props: Props): ReactElement => {
           </Panel>
         </div>
       </Panel>
+      <br />
+      <Panel title="Emergency Contact" color="primary" collapsible>
+        <div className="row">
+          <div className="col-md-4">
+            <TextInputWithLabelFormGroup
+              label="Name"
+              name="emergencyContactName"
+              value={patient.emergencyContactName}
+              isEditable={isEditable}
+              onChange={(event) => onFieldChange('emergencyContactName', event.currentTarget.value)}
+            />
+          </div>
+          <div className="col-md-4">
+            <TextInputWithLabelFormGroup
+              label="Phone Number"
+              name="emergencyContactNumber"
+              value={patient.emergencyContactNumber}
+              isEditable={isEditable}
+              onChange={(event) =>
+                onFieldChange('emergencyContactNumber', event.currentTarget.value)
+              }
+            />
+          </div>
+        </div>
+      </Panel>
     </div>
   )
 }

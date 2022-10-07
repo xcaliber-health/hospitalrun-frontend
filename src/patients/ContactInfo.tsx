@@ -40,7 +40,7 @@ const ContactInfo = (props: Props): ReactElement => {
       <Column xs={12} sm={4}>
         {/* <span className="">{t('patient.contactInfoType.label')}</span>
         <span className="d-sm-none"> &amp; {t(label)}</span> */}
-         <Label text={`${name} Type`} />
+        <Label text={`${name}Type`} />
       </Column>
       <Column className="d-none d-sm-block" sm={8}>
         {t(label)}

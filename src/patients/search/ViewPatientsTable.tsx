@@ -2,7 +2,6 @@ import { Table } from '@hospitalrun/components'
 import React from 'react'
 //import { AnyIfEmpty } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-
 import Loading from '../../shared/components/Loading'
 import useTranslator from '../../shared/hooks/useTranslator'
 import Patient from '../../shared/model/Patient'
@@ -22,6 +21,8 @@ const ViewPatientsTable = (props: Props) => {
   const { t } = useTranslator()
   const history = useHistory()
   const { data, status } = usePatients(searchRequest)
+
+  console.log(data)
 
   if (data === undefined || status === 'loading') {
     return <Loading />
@@ -49,7 +50,15 @@ const ViewPatientsTable = (props: Props) => {
         },
       ]}
       actionsHeaderText={t('actions.label')}
-      actions={[{ label: t('actions.view'), action: (row) => history.push(`/patients/${row.id}`) }]}
+      actions={[
+        {
+          label: t('actions.view'),
+          action: (row) => {
+            console.log(`/patients/${row.id}`)
+            history.push(`/patients/${row.id}`)
+          },
+        },
+      ]}
     />
     {console.log('patientdata: ',props.patientData)}
     </>
