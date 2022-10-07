@@ -62,35 +62,35 @@ const GeneralInformation = (props: Props): ReactElement => {
   }
 
   const sexOptions: SelectOption[] = [
-    { label: "Man", value: 'man' },
-    { label: "Women", value: 'woman' },
-    { label: "Other", value: 'nonbinary' },
-    { label: "Unknown", value: 'unknown' },
+    { label: t('sex.male'), value: 'male' },
+    { label: t('sex.female'), value: 'female' },
+    { label: t('sex.other'), value: 'other' },
+    { label: t('sex.unknown'), value: 'unknown' },
   ]
 
-  // const typeOptions: SelectOption[] = [
-  //   { label: t('patient.types.charity'), value: 'charity' },
-  //   { label: t('patient.types.private'), value: 'private' },
-  // ]
+  const typeOptions: SelectOption[] = [
+    { label: t('patient.types.charity'), value: 'charity' },
+    { label: t('patient.types.private'), value: 'private' },
+  ]
 
-  // const bloodTypeOptions: SelectOption[] = [
-  //   { label: t('bloodType.apositive'), value: 'A+' },
-  //   { label: t('bloodType.anegative'), value: 'A-' },
-  //   { label: t('bloodType.abpositive'), value: 'AB+' },
-  //   { label: t('bloodType.abnegative'), value: 'AB-' },
-  //   { label: t('bloodType.bpositive'), value: 'B+' },
-  //   { label: t('bloodType.bnegative'), value: 'B-' },
-  //   { label: t('bloodType.opositive'), value: 'O+' },
-  //   { label: t('bloodType.onegative'), value: 'O-' },
-  //   { label: t('bloodType.unknown'), value: 'unknown' },
-  // ]
+  const bloodTypeOptions: SelectOption[] = [
+    { label: t('bloodType.apositive'), value: 'A+' },
+    { label: t('bloodType.anegative'), value: 'A-' },
+    { label: t('bloodType.abpositive'), value: 'AB+' },
+    { label: t('bloodType.abnegative'), value: 'AB-' },
+    { label: t('bloodType.bpositive'), value: 'B+' },
+    { label: t('bloodType.bnegative'), value: 'B-' },
+    { label: t('bloodType.opositive'), value: 'O+' },
+    { label: t('bloodType.onegative'), value: 'O-' },
+    { label: t('bloodType.unknown'), value: 'unknown' },
+  ]
 
   return (
     <div>
       <Panel title={t('patient.basicInformation')} color="primary" collapsible>
         {error?.message && <Alert className="alert" color="danger" message={t(error?.message)} />}
         <div className="row">
-          {/* <div className="col-md-2">
+          <div className="col-md-2">
             <TextInputWithLabelFormGroup
               label={t('patient.prefix')}
               name="prefix"
@@ -100,7 +100,7 @@ const GeneralInformation = (props: Props): ReactElement => {
               isInvalid={!!error?.prefix}
               feedback={t(error?.prefix)}
             />
-          </div> */}
+          </div>
           <div className="col-md-4">
             <TextInputWithLabelFormGroup
               label={t('patient.givenName')}
@@ -115,37 +115,74 @@ const GeneralInformation = (props: Props): ReactElement => {
           </div>
           <div className="col-md-4">
             <TextInputWithLabelFormGroup
-              label="Middle Name"
-              name="suffix"
-              value={patient.suffix}
-              isEditable={isEditable}
-              isRequired
-              onChange={(event) => onFieldChange('suffix', event.currentTarget.value)}
-              isInvalid={!!error?.suffix}
-              feedback={t(error?.suffix)}
-            />
-          </div>
-          <div className="col-md-4">
-            <TextInputWithLabelFormGroup
               label={t('patient.familyName')}
               name="familyName"
               value={patient.familyName}
               isEditable={isEditable}
-              isRequired
               onChange={(event) => onFieldChange('familyName', event.currentTarget.value)}
               isInvalid={!!error?.familyName}
               feedback={t(error?.familyName)}
             />
           </div>
+          <div className="col-md-2">
+            <TextInputWithLabelFormGroup
+              label={t('patient.suffix')}
+              name="suffix"
+              value={patient.suffix}
+              isEditable={isEditable}
+              onChange={(event) => onFieldChange('suffix', event.currentTarget.value)}
+              isInvalid={!!error?.suffix}
+              feedback={t(error?.suffix)}
+            />
+          </div>
         </div>
         <div className="row">
-          <div className="col-md-4">
+          <div className="col">
+            <div className="form-group" data-testid="sexSelect">
+              <Label text={t('patient.sex')} title="sex" />
+              <Select
+                id="sexSelect"
+                options={sexOptions}
+                defaultSelected={sexOptions.filter(({ value }) => value === patient.sex)}
+                onChange={(values) => onFieldChange('sex', values[0])}
+                disabled={!isEditable}
+              />
+            </div>
+          </div>
+          <div className="col">
+            <div className="form-group" data-testid="typeSelect">
+              <Label text={t('patient.type')} title="type" />
+              <Select
+                id="typeSelect"
+                options={typeOptions}
+                defaultSelected={typeOptions.filter(({ value }) => value === patient.type)}
+                onChange={(values) => onFieldChange('type', values[0])}
+                disabled={!isEditable}
+              />
+            </div>
+          </div>
+          <div className="col">
+            <div className="form-group" data-testid="bloodTypeSelect">
+              <Label text={t('patient.bloodType')} title="bloodType" />
+              <Select
+                id="bloodTypeSelect"
+                options={bloodTypeOptions}
+                defaultSelected={bloodTypeOptions.filter(
+                  ({ value }) => value === patient.bloodType,
+                )}
+                onChange={(values) => onFieldChange('bloodType', values[0])}
+                disabled={!isEditable}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-3">
             {patient.isApproximateDateOfBirth ? (
               <TextInputWithLabelFormGroup
                 label={t('patient.approximateAge')}
                 name="approximateAge"
                 type="number"
-                isRequired
                 value={`${differenceInYears(new Date(Date.now()), new Date(patient.dateOfBirth))}`}
                 isEditable={isEditable}
                 onChange={onApproximateAgeChange}
@@ -154,7 +191,6 @@ const GeneralInformation = (props: Props): ReactElement => {
               <DatePickerWithLabelFormGroup
                 name="dateOfBirth"
                 label={t('patient.dateOfBirth')}
-                isRequired
                 isEditable={isEditable && !patient.isApproximateDateOfBirth}
                 value={
                   patient.dateOfBirth && patient.dateOfBirth.length > 0
@@ -176,47 +212,7 @@ const GeneralInformation = (props: Props): ReactElement => {
               />
             </div>
           </div>
-          <div className="col-md-4">
-            <div className="form-group" data-testid="sexSelect">
-              <Label text={t('patient.sex')} title="sex" />
-              <Select
-                id="sexSelect"
-                options={sexOptions}
-                defaultSelected={sexOptions.filter(({ value }) => value === patient.sex)}
-                onChange={(values) => onFieldChange('sex', values[0])}
-                disabled={!isEditable}
-              />
-            </div>
-          </div>
-          {/* <div className="col">
-            <div className="form-group" data-testid="typeSelect">
-              <Label text={t('patient.type')} title="type" />
-              <Select
-                id="typeSelect"
-                options={typeOptions}
-                defaultSelected={typeOptions.filter(({ value }) => value === patient.type)}
-                onChange={(values) => onFieldChange('type', values[0])}
-                disabled={!isEditable}
-              />
-            </div>
-          </div> */}
-          {/* <div className="col">
-            <div className="form-group" data-testid="bloodTypeSelect">
-              <Label text={t('patient.bloodType')} title="bloodType" />
-              <Select
-                id="bloodTypeSelect"
-                options={bloodTypeOptions}
-                defaultSelected={bloodTypeOptions.filter(
-                  ({ value }) => value === patient.bloodType,
-                )}
-                onChange={(values) => onFieldChange('bloodType', values[0])}
-                disabled={!isEditable}
-              />
-            </div>
-          </div> */}
-        </div>
-        <div className="row">
-          {/* <div className="col">
+          <div className="col">
             <TextInputWithLabelFormGroup
               label={t('patient.occupation')}
               name="occupation"
@@ -224,8 +220,8 @@ const GeneralInformation = (props: Props): ReactElement => {
               isEditable={isEditable}
               onChange={(event) => onFieldChange('occupation', event.currentTarget.value)}
             />
-          </div> */}
-          {/* <div className="col">
+          </div>
+          <div className="col">
             <TextInputWithLabelFormGroup
               label={t('patient.preferredLanguage')}
               name="preferredLanguage"
@@ -235,11 +231,11 @@ const GeneralInformation = (props: Props): ReactElement => {
               isInvalid={!!error?.preferredLanguage}
               feedback={t(error?.preferredLanguage)}
             />
-          </div> */}
+          </div>
         </div>
       </Panel>
       <br />
-       <Panel title={t('patient.contactInformation')} color="primary" collapsible>
+      <Panel title={t('patient.contactInformation')} color="primary" collapsible>
         <div className="mb-4">
           <Panel title={t('patient.phoneNumber')} color="primary" collapsible>
             <ContactInfo
@@ -278,7 +274,32 @@ const GeneralInformation = (props: Props): ReactElement => {
             />
           </Panel>
         </div>
-      </Panel> 
+      </Panel>
+      <br />
+      <Panel title="Emergency Contact" color="primary" collapsible>
+        <div className="row">
+          <div className="col-md-4">
+            <TextInputWithLabelFormGroup
+              label="Name"
+              name="emergencyContactName"
+              value={patient.emergencyContactName}
+              isEditable={isEditable}
+              onChange={(event) => onFieldChange('emergencyContactName', event.currentTarget.value)}
+            />
+          </div>
+          <div className="col-md-4">
+            <TextInputWithLabelFormGroup
+              label="Phone Number"
+              name="emergencyContactNumber"
+              value={patient.emergencyContactNumber}
+              isEditable={isEditable}
+              onChange={(event) =>
+                onFieldChange('emergencyContactNumber', event.currentTarget.value)
+              }
+            />
+          </div>
+        </div>
+      </Panel>
     </div>
   )
 }
