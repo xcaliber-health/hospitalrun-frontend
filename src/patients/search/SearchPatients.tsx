@@ -6,9 +6,10 @@ import PatientSearchInput from './PatientSearchInput'
 import ViewPatientsTable from './ViewPatientsTable'
 import FilterMenu from './filter/PatientFilter'
 import { data } from './../util/constants'
+import Pagination from '../util/Pagination'
 // import PatientRepository from '../../shared/db/PatientRepository'
 import Patient from '../../shared/model/Patient'
-import { getAllPatients } from '../../service/service'
+import {  getAllPatients, getPatientCount } from '../../service/service'
 
 
 export interface ILabelsContext {
@@ -29,11 +30,12 @@ const SearchPatients = () => {
   const [filterValues, setFilterValues] = useState<Array<String>>([])
   const [clearFilterS, setClearFilterS]= useState(false)
   const [trigger, setTrigger]= useState<boolean>(false)
- 
-
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   
 
   const onSearchRequestChange = useCallback((newSearchRequest: PatientSearchRequest) => {
+    console.log(newSearchRequest.queryString);
     setSearchRequest(newSearchRequest)
   }, [])
 
@@ -49,15 +51,23 @@ const SearchPatients = () => {
     setClearFilterS(false)
     setTrigger(true)
   }
+
+  const onPageChange = (currentPage: number) => {
+    setPage(currentPage);
+  }
 const changeTrigger = (param:boolean) =>{
   setTrigger(param)
 }
 
 
-
  
   let allFilterData: any = []
   useEffect(() => {
+    const processor = async () => {
+      const pages = await getPatientCount(searchRequest.queryString);
+      setTotalPages(pages);
+    }
+    processor();
   }, [allFilterData]);
 
   function getAge(dateString:string) {   
@@ -68,6 +78,7 @@ const changeTrigger = (param:boolean) =>{
 }
 
   const filterAllPatientData = async (param:any) => {
+    console.log(param);
     console.log('paramValues: ',param,param.length)
     if (param?.length > 0) {
      
@@ -121,7 +132,9 @@ const changeTrigger = (param:boolean) =>{
               filterAllPatientData(param)
               setClearFilterS(true)
             }}
-            handleApply={() => {}}
+            handleApply={() => {
+              console.log("entered")
+            }}
             clearFilters={changeTrigger}
             trigger={trigger}
             
@@ -158,7 +171,10 @@ const changeTrigger = (param:boolean) =>{
             </Column>
           </Row>
           <Row>
-            <ViewPatientsTable searchRequest={searchRequest} filtered={clearFilterS} patientData={clearFilterS ? filteredPatientData : []} />
+            <ViewPatientsTable searchRequest={searchRequest} filtered={clearFilterS} patientData={clearFilterS ? filteredPatientData : [] } page={page}/>
+          </Row>
+          <Row>
+            <Pagination currentPage={page} onPageChange={onPageChange} pageSize={10} totalCount={totalPages} siblingCount={1}></Pagination>
           </Row>
         </Container>
       </div>

@@ -10,7 +10,6 @@ import useTranslator from '../../shared/hooks/useTranslator'
 import SearchPatients from './SearchPatients'
 
 const breadcrumbs = [{ i18nKey: 'patients.label', location: '/patients' }]
-
 const ViewPatients = () => {
   const { t } = useTranslator()
   const history = useHistory()
@@ -20,7 +19,6 @@ const ViewPatients = () => {
   })
   const dispatch = useDispatch()
   const setButtonToolBar = useButtonToolbarSetter()
-
   useAddBreadcrumbs(breadcrumbs, true)
 
   useEffect(() => {

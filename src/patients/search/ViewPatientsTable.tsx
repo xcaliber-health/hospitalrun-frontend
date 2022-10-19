@@ -1,7 +1,7 @@
 import { Table } from '@hospitalrun/components'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getAllPatients } from '../../service/service'
+import { getPatientsAtPage } from '../../service/service'
 import Loading from '../../shared/components/Loading'
 import useTranslator from '../../shared/hooks/useTranslator'
 import Patient from '../../shared/model/Patient'
@@ -14,6 +14,7 @@ export interface Props {
   searchRequest: PatientSearchRequest
   filtered: Boolean
   patientData: Patient[]
+  page: number
 }
 
 export interface TableObj {
@@ -56,7 +57,7 @@ const ViewPatientsTable = (props: Props) => {
   })
 
   const func = async () => {
-    const d: any = await getAllPatients()
+    const d: any = await getPatientsAtPage(props.page, searchRequest.queryString);
     console.log('data', d)
     // const newData =await parserFunc(d.data.entry)
     // console.log('parsedFuncdata', newData)
@@ -70,7 +71,7 @@ const ViewPatientsTable = (props: Props) => {
 
   useEffect(() => {
     func()
-  }, [])
+  }, [props.page])
 
   if (awaitd) {
     console.log(status)
